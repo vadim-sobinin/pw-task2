@@ -60,7 +60,7 @@ export const Comments: React.FC<CommentsProps> = ({ currentUser, currentCardId }
       <div className="comment-form-title">Write comment</div>
       <CommentForm submitLabel="Write" handleSubmit={addComment} />
       <div className="comments-container">
-        {rootComments.map((rootComment) => (
+        {rootComments.reverse().map((rootComment) => (
           <Comment
             key={rootComment.id}
             comment={rootComment}

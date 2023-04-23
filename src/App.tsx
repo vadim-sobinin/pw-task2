@@ -3,7 +3,8 @@ import styled from 'styled-components';
 import { Board } from './components/boardComponents/Board';
 import { Header } from './components/Header';
 import { Provider } from 'react-redux';
-import { store } from './redux/store';
+import { store, persistor } from './redux/store';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const AppWrapper = styled.div`
   width: 100%;
@@ -16,10 +17,12 @@ const AppWrapper = styled.div`
 const App: React.FC = () => {
   return (
     <Provider store={store}>
-      <AppWrapper>
-        <Header />
-        <Board />
-      </AppWrapper>
+      <PersistGate loading={null} persistor={persistor}>
+        <AppWrapper>
+          <Header />
+          <Board />
+        </AppWrapper>
+      </PersistGate>
     </Provider>
   );
 };
