@@ -3,9 +3,11 @@ import styled from 'styled-components';
 import { Card } from '../cardComponents/Card';
 import { Flex } from '../styleWrappers/Flex';
 import plusIcon from '../../assets/img/svg/plus2.svg';
-import { IRow, ICard } from '../../@types/types';
-import { AppContext } from '../../context/AppContext';
+import { IRow } from '../../@types/types';
 import debounce from 'lodash.debounce';
+import { useAppDispatch, useAppSelector } from '../../hooks/hook';
+import { renameRow } from '../../redux/slices/rowsSlice';
+import { addCard } from '../../redux/slices/cardsSlice';
 
 const StyledRow = styled.div`
   display: inline-block;
@@ -57,43 +59,20 @@ interface RowProps {
 }
 
 export const Row: React.FC<RowProps> = ({ row }) => {
-  const context = React.useContext(AppContext);
+  const dispatch = useAppDispatch();
 
-  const cards = context?.cards;
-  const setCards = context?.setCards;
-  const currentUser = context?.currentUser;
+  const { users, cards } = useAppSelector((state) => state);
 
   const [inputValue, setInputValue] = React.useState(row.title);
 
   const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
-
-    context && updateRowTitle(e.target.value, context.rows);
+    dispatch(renameRow({ rowId: row.id, newTitle: e.target.value }));
   };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const updateRowTitle = React.useCallback(
-    debounce((input, rows: IRow[]) => {
-      const RowIndex = rows.findIndex((findRow) => findRow.id === row.id);
-      const newRowArr: IRow[] = JSON.parse(JSON.stringify(rows));
-      newRowArr[RowIndex].title = input;
-      context?.setRows(newRowArr);
-    }, 500),
-    [],
-  );
 
   const onClickAddCart = () => {
-    if (currentUser && cards && setCards) {
-      const newCard: ICard[] = [
-        {
-          id: Date.now().toString(),
-          title: 'New card',
-          description: '',
-          rowId: row.id,
-          userId: currentUser.id,
-        },
-      ];
-      setCards(cards.concat(newCard));
-    }
+    dispatch(addCard({ rowId: row.id, userId: users.currentUser.id }));
   };
 
   return (

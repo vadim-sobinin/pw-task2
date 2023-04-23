@@ -1,8 +1,8 @@
 import React from 'react';
 import { IComment } from '../../@types/types';
 import userIcon from '../../assets/img/user-icon.png';
-import { AppContext } from '../../context/AppContext';
 import { CommentForm } from './CommentForm';
+import { useAppSelector } from '../../hooks/hook';
 
 interface CommentProps {
   comment: IComment;
@@ -30,9 +30,7 @@ export const Comment: React.FC<CommentProps> = ({
   addComment,
   updateComment,
 }) => {
-  const context = React.useContext(AppContext);
-
-  const currentUserId = context?.currentUser?.id;
+  const currentUserId = useAppSelector((state) => state.users.currentUser.id);
 
   const canEdit = currentUserId === comment.userId;
   const canReply = !Boolean(comment.parentId);

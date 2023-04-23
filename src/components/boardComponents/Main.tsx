@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Row } from './Row';
 import 'reactjs-popup/dist/index.css';
-import { AppContext } from '../../context/AppContext';
+import { useAppSelector } from '../../hooks/hook';
 
 const StyledMain = styled.section`
   margin: 37px 0 0 35px;
@@ -13,7 +13,7 @@ const StyledMain = styled.section`
 `;
 
 export const Main: React.FC = () => {
-  const rows = React.useContext(AppContext)?.rows;
+  const rows = useAppSelector((state) => state.rows);
 
   return (
     <>

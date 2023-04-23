@@ -5,7 +5,8 @@ import editIcon from '../../assets/img/svg/edit.svg';
 import commentIcon from '../../assets/img/svg/comment.svg';
 import { ICard } from '../../@types/types';
 import CardPopup, { RefType } from './CardPopup';
-import { AppContext } from '../../context/AppContext';
+import { useAppDispatch, useAppSelector } from '../../hooks/hook';
+import { updateCardName } from '../../redux/slices/cardsSlice';
 
 const FlexWithCursor = styled(Flex)`
   cursor: pointer;
@@ -81,7 +82,7 @@ export function autoGrow(elem: HTMLTextAreaElement) {
 }
 
 export const Card: React.FC<PropsType> = ({ card }) => {
-  const context = React.useContext(AppContext);
+  const dispatch = useAppDispatch();
 
   const refCardNameInput = React.useRef<HTMLTextAreaElement>(null);
   const refPopup = React.useRef<RefType>(null);
@@ -95,14 +96,14 @@ export const Card: React.FC<PropsType> = ({ card }) => {
 
   const onPressKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.code === 'Enter' || e.code === 'Escape') {
-      context?.updateCardName(card.id, inputValue);
+      dispatch(updateCardName({ cardId: card.id, newName: inputValue }));
       setEditing(false);
     }
   };
 
   const onInputBlur = () => {
     setEditing(false);
-    context?.updateCardName(card.id, inputValue);
+    dispatch(updateCardName({ cardId: card.id, newName: inputValue }));
   };
 
   const onChangeInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -154,7 +155,13 @@ export const Card: React.FC<PropsType> = ({ card }) => {
         </Flex>
         <StyledCommentButton>
           <img src={commentIcon} alt="edit name button" width={22} height={22} />
-          <span>{context?.comments.filter((comment) => comment.cardId === card.id).length}</span>
+          <span>
+            {
+              useAppSelector((state) => state.comments).filter(
+                (comment) => comment.cardId === card.id,
+              ).length
+            }
+          </span>
         </StyledCommentButton>
       </FlexWithCursor>
 

@@ -1,11 +1,11 @@
 import React from 'react';
-import { ICard, IUser } from '../../@types/types';
-import { AppContext } from '../../context/AppContext';
 import { Header } from './Header';
 import { Main } from './Main';
+import { useAppDispatch } from '../../hooks/hook';
+import { setCurrentUser } from '../../redux/slices/usersSlice';
 
 export const Board: React.FC = () => {
-  const context = React.useContext(AppContext);
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     login();
@@ -17,17 +17,7 @@ export const Board: React.FC = () => {
       username = window.prompt('Please write your name: ');
     }
 
-    const findUser = context?.users.find((user) => user.name === username);
-    if (findUser) {
-      context?.setCurrentUser(findUser);
-    } else if (username) {
-      const newUser: IUser = {
-        id: String(context?.users.length),
-        name: username,
-      };
-      context?.setCurrentUser(newUser);
-      context?.setUsers([...context.users, newUser]);
-    }
+    dispatch(setCurrentUser(username));
   };
 
   const onClickLogout = () => {

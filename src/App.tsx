@@ -2,7 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { Board } from './components/boardComponents/Board';
 import { Header } from './components/Header';
-import { AppContextProvider } from './context/AppContext';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
 
 const AppWrapper = styled.div`
   width: 100%;
@@ -14,12 +15,12 @@ const AppWrapper = styled.div`
 
 const App: React.FC = () => {
   return (
-    <AppContextProvider>
+    <Provider store={store}>
       <AppWrapper>
         <Header />
         <Board />
       </AppWrapper>
-    </AppContextProvider>
+    </Provider>
   );
 };
 

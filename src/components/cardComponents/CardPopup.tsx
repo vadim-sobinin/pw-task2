@@ -1,15 +1,15 @@
 import React, { forwardRef, useImperativeHandle, Ref } from 'react';
 import Popup from 'reactjs-popup';
-// import 'reactjs-popup/dist/index.css';
 import styled from 'styled-components';
 import { ICard } from '../../@types/types';
 
 import iconCard from '../../assets/img/svg/card.svg';
 import iconDelete from '../../assets/img/svg/delete.svg';
-import { AppContext } from '../../context/AppContext';
 import { Comments } from '../commentsComponents/Comments';
 import { Flex } from '../styleWrappers/Flex';
 import { autoGrow } from './Card';
+import { useAppDispatch, useAppSelector } from '../../hooks/hook';
+import { deleteCard, updateCardName } from '../../redux/slices/cardsSlice';
 
 const StyledPopup = styled(Popup)`
   font-size: 12px;
@@ -126,7 +126,10 @@ export interface RefType {
 }
 
 const CardPopup = ({ card }: PropsType, ref: Ref<RefType>) => {
-  const context = React.useContext(AppContext);
+  const dispatch = useAppDispatch();
+
+  const { rows, users } = useAppSelector((state) => state);
+  const userList = users.users;
 
   const [inputValue, setInputValue] = React.useState(card.title);
 
@@ -150,7 +153,7 @@ const CardPopup = ({ card }: PropsType, ref: Ref<RefType>) => {
 
   const onClickDelete = () => {
     if (window.confirm('Are you sure that you want to delete this card?'))
-      context?.setCards(context.cards.filter((filteredCard) => card.id !== filteredCard.id));
+      dispatch(deleteCard(card));
   };
 
   useImperativeHandle(ref, () => ({ onClickCard }));
@@ -168,16 +171,15 @@ const CardPopup = ({ card }: PropsType, ref: Ref<RefType>) => {
                 <img src={iconCard} alt="icon" width={24} height={24} />
               </StyledIconWrapper>
               <StyledTitleTextArea
-                onBlur={() => context?.updateCardName(card.id, inputValue)}
+                onBlur={() => dispatch(updateCardName({ cardId: card.id, newName: inputValue }))}
                 onChange={onChangeInput}
                 value={inputValue}
               />
               <p>
-                in list <span>{context?.rows.find((row) => row.id === card.rowId)?.title}</span>
+                in list <span>{rows.find((row) => row.id === card.rowId)?.title}</span>
               </p>
               <p>
-                created by{' '}
-                <span>{context?.users.find((user) => user.id === card.userId)?.name}</span>
+                created by <span>{userList.find((user) => user.id === card.userId)?.name}</span>
               </p>
             </StyledHeader>
             <StyledContent>
@@ -204,7 +206,7 @@ const CardPopup = ({ card }: PropsType, ref: Ref<RefType>) => {
                 </StyledButtons>
               </Flex>
 
-              <Comments currentUser={context?.currentUser} currentCardId={card.id} />
+              <Comments currentUser={users.currentUser} currentCardId={card.id} />
             </StyledHeader>
           </div>
         )

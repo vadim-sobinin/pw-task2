@@ -1,5 +1,4 @@
 import React, { FormEvent } from 'react';
-import { AppContext } from '../../context/AppContext';
 
 interface CommentFormProps {
   handleSubmit: (text: string, parentId: string | null) => void;
