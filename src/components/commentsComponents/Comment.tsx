@@ -62,7 +62,7 @@ export const Comment: React.FC<CommentProps> = ({
             submitLabel="Update"
             hasCancelButton
             initialText={comment.body}
-            handleSubmit={(text) => updateComment(text, comment.id)}
+            handleFormSubmit={(text) => updateComment(text, comment.id)}
             handleCancel={() => setActiveComment(null)}
           />
         )}
@@ -89,7 +89,7 @@ export const Comment: React.FC<CommentProps> = ({
         </div>
 
         {isReplying && (
-          <CommentForm submitLabel="Reply" handleSubmit={(text) => addComment(text, replyId)} />
+          <CommentForm submitLabel="Reply" handleFormSubmit={(text) => addComment(text, replyId)} />
         )}
         {replies && replies.length > 0 && (
           <div className="replies">

@@ -1,15 +1,20 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
 interface CommentFormProps {
-  handleSubmit: (text: string, parentId: string | null) => void;
+  handleFormSubmit: (text: string, parentId: string | null) => void;
   submitLabel: string;
   initialText?: string;
   hasCancelButton?: boolean;
   handleCancel?: () => void;
 }
 
+interface ICommentInput {
+  comment: string;
+}
+
 export const CommentForm: React.FC<CommentFormProps> = ({
-  handleSubmit,
+  handleFormSubmit,
   submitLabel,
   hasCancelButton,
   handleCancel,
@@ -19,24 +24,26 @@ export const CommentForm: React.FC<CommentFormProps> = ({
     initialText = '';
   }
 
-  const [text, setText] = React.useState<string>(initialText);
+  const { register, handleSubmit, reset, formState } = useForm();
 
-  const isTextAriaDisabled = text.length === 0;
+  // const isTextAriaDisabled = text.length === 0;
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    handleSubmit(text, null);
-    setText('');
+  const onSubmit: SubmitHandler<ICommentInput> = (data) => {
+    handleFormSubmit(data.comment, null);
+    reset();
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    // @ts-ignore
+    <form onSubmit={handleSubmit(onSubmit)}>
       <textarea
         className="comment-form-textarea"
-        value={text}
-        onChange={(e) => setText(e.target.value)}></textarea>
-      <button className="comment-form-button" disabled={isTextAriaDisabled}>
-        {submitLabel}
+        defaultValue={initialText}
+        {...register('comment', {
+          required: true,
+        })}></textarea>
+      <button className="comment-form-button" disabled={formState.isValid ? false : true}>
+        {submitLabel}{' '}
       </button>
       {hasCancelButton && (
         <button className="comment-form-button comment-form-cancel-button" onClick={handleCancel}>
